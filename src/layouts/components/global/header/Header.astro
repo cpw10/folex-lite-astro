@@ -1,7 +1,7 @@
 ---
 import Logo from "@/components/global/Logo.astro";
 import Offcanvas from "../../widgets/Offcanvas.astro";
-import { parseTomlToJson } from "@/lib/utils/tomlUtils";
+import config from ".astro/config.generated.json" with { type: "json" };
 import { useTranslations } from "@/lib/utils/i18nUtils";
 import NavbarToggler from "@/layouts/components/global/header/NavbarToggler.astro";
 import HeaderOffcanvasContent from "@/components/widgets/HeaderOffcanvasContent.astro";
@@ -9,7 +9,6 @@ import LanguageSwitcher from "@/layouts/components/global/header/LanguageSwitche
 import Navbar from "./Navbar.astro";
 import CustomButton from "@/components/CustomButton.astro";
 
-const config = parseTomlToJson();
 const t = await useTranslations(Astro.currentLocale as string);
 
 const isCategoryFilteredPage = ["/category/", "/tag/"].some((path) =>
@@ -69,9 +68,9 @@ const {
             {navigationButton.enable && (
               <CustomButton
                 variant="fill"
-                label={t("navigation.buttonLabel")}
                 hoverEffect="creative-fill"
                 {...navigationButton}
+                label={navigationButton.label || t("navigation.buttonLabel")}
                 class:list={[
                   hasDarkBackground
                     ? "btn-accent effect-color-dark"

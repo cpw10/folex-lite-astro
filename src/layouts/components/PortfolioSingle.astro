@@ -138,9 +138,8 @@ if (Array.isArray(information)) {
       window.addEventListener("load", async function () {
         await import("swiper/swiper-bundle.css");
         const { Swiper } = await import("swiper");
-        const { Autoplay, Pagination, Navigation } = await import(
-          "swiper/modules"
-        );
+        const { Autoplay, Pagination, Navigation } =
+          await import("swiper/modules");
 
         // Initialize banner Swiper
         const portfolioSlider = document.querySelector(

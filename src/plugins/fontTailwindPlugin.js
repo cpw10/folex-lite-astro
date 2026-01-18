@@ -9,7 +9,7 @@
  * [
  *   {
  *     "name": "Inter",
- *     "cssVariable": "font-inter",
+ *     "cssVariable": "--font-inter",
  *     "fallback": "sans-serif"
  *   }
  * ]
@@ -21,11 +21,11 @@
  *   }
  */
 import plugin from "tailwindcss/plugin";
-import { fontFamily } from "../config/fonts.json";
+import fontFamily from "../config/fonts.json";
 
 const fontFamilies = Object.fromEntries(
   fontFamily.map((font) => [
-    font.cssVariable?.replace("font-", "") || font.name.toLowerCase(),
+    font.cssVariable?.replace("--font-", "") || font.name.toLowerCase(),
     `${font.name}, ${font.fallback || "sans-serif"}`,
   ]),
 );

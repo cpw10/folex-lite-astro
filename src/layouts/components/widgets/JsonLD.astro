@@ -2,9 +2,8 @@
 import { absoluteUrl } from "@/lib/utils/absoluteUrl";
 import JsonLdGenerator from "@/lib/utils/JsonLdGenerator";
 import { supportedLanguages } from "@/lib/utils/i18nUtils";
-import { parseTomlToJson } from "@/lib/utils/tomlUtils";
+import config from ".astro/config.generated.json" with { type: "json" };
 
-const config = parseTomlToJson();
 const { content } = Astro.props;
 
 let {

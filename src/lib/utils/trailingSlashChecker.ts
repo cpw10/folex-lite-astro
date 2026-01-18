@@ -1,5 +1,4 @@
-import { parseTomlToJson } from "./tomlUtils";
-const config = parseTomlToJson();
+import config from ".astro/config.generated.json" with { type: "json" };
 
 /**
  * Add a trailing slash to the url if trailingSlash option true from config.toml else remove the trailing slash if present.

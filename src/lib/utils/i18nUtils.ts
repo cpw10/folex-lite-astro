@@ -1,10 +1,9 @@
-import { parseTomlToJson } from "./tomlUtils";
-import languagesJSON from "../../config/language.json";
-import trailingSlashChecker from "./trailingSlashChecker";
 import path from "node:path";
+import trailingSlashChecker from "./trailingSlashChecker";
+import config from "../../../.astro/config.generated.json";
+import languagesJSON from "../../config/language.json";
 
 // Load configuration from TOML file
-const config = parseTomlToJson();
 let {
   enable: multilingualEnable,
   showDefaultLangInUrl,
@@ -12,28 +11,21 @@ let {
   disableLanguages,
 } = config.settings.multilingual;
 
-export const getEnabledLocales = (
-  languagesJSON: any[],
-  multilingualEnable: any,
-  disableLanguages = [],
-  defaultLang = "en",
-) => {
-  const supported = languagesJSON.map(
-    (lang: { languageCode: any }) => lang.languageCode,
-  );
+export const getEnabledLocales = (): string[] => {
+  let enabled = languagesJSON.map((lang) => lang.languageCode);
+  const supported = languagesJSON.map((lang) => lang.languageCode);
   const disabled = multilingualEnable
-    ? disableLanguages
-    : supported.filter((lang: string) => lang !== defaultLang);
+    ? disableLanguages || []
+    : supported.filter((lang) => lang !== defaultLanguage);
 
-  return supported.filter((lang: any) => !disabled.includes(lang));
+  if (disabled.length > 0) {
+    enabled = supported.filter((lang) => !disabled.includes(lang as never));
+  }
+
+  return enabled;
 };
 
-export const enabledLanguages = getEnabledLocales(
-  languagesJSON,
-  multilingualEnable,
-  disableLanguages,
-  defaultLanguage,
-);
+export const enabledLanguages = getEnabledLocales();
 
 /**
  * Fetches the translations for a given language. If the requested language is disabled
@@ -47,7 +39,7 @@ export const useTranslations = async (lang: string): Promise<Function> => {
   const { defaultLanguage, disableLanguages } = config.settings.multilingual;
 
   // Fallback to default language if the requested language is disabled
-  const resolvedLang = disableLanguages?.includes(lang)
+  const resolvedLang = disableLanguages?.includes(lang as never)
     ? defaultLanguage
     : lang;
 
@@ -132,16 +124,21 @@ export const getSupportedLanguages = (): Array<any> => {
   }
 
   const supportedLanguages = [...languagesJSON.map((lang) => lang)];
-  let disabledLanguages = config.settings.multilingual.enable
-    ? config.settings.multilingual.disableLanguages
-    : supportedLanguages
-        .map((lang) => lang.languageCode !== "en" && lang.languageCode)
-        .filter(Boolean);
+  let disabledLanguages = (
+    config.settings.multilingual.enable
+      ? config.settings.multilingual.disableLanguages
+      : supportedLanguages
+          .map(
+            (lang) =>
+              lang.languageCode !== defaultLanguage && lang.languageCode,
+          )
+          .filter(Boolean)
+  ) as (typeof supportedLanguages)[0]["languageCode"][];
 
   // Filter out the disabled languages
   cachedLanguages = disabledLanguages
     ? supportedLanguages.filter(
-        (lang) => !disabledLanguages.includes(lang.languageCode),
+        (lang) => !disabledLanguages?.includes(lang.languageCode),
       )
     : supportedLanguages;
 
@@ -225,6 +222,11 @@ export const getLocaleUrlCTM = (
   // Don't handle external url
   if (isExternalUrl) return url;
 
+  // if url contain .md or .mdx remove it
+  if (url.endsWith(".mdx") || url.endsWith(".md")) {
+    updatedUrl = url.replace(/\.(md|mdx)$/, "");
+  }
+
   // If url is mailto: or dial: then don't handle it
   if (url.startsWith("mailto:") || url.startsWith("tel:")) return url;
 
@@ -261,12 +263,6 @@ export const getLocaleUrlCTM = (
   }
 
   const isDefaultLanguage = language === defaultLanguage;
-
-  // Get the language code from the URL
-  // const getLangFromUrl = (u: string): string | undefined => {
-  //   const segments = u.split("/");
-  //   return languageCodes.find((item) => segments.includes(item));
-  // };
 
   // Get the language code from the URL
   const getUrlWithoutLang = (u: string): string | undefined => {

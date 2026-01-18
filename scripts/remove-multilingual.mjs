@@ -1,17 +1,21 @@
 import path from "path";
 import fs from "fs/promises";
 import languages from "../src/config/language.json" with { type: "json" };
+import config from "../.astro/config.generated.json" with { type: "json" };
 
 // Constants
 const CONTENT_DIR = "src/content";
 const CONFIG_DIR = "src/config";
 const I18N_DIR = "src/i18n";
 const LANGUAGE_FILE = path.join(CONFIG_DIR, "language.json");
+const DEFAULT_LANG = config.settings.multilingual.defaultLanguage;
 
 // Filter languages
-const ENGLISH_LANG = languages.filter((item) => item.languageCode === "en");
+const ENGLISH_LANG = languages.filter(
+  (item) => item.languageCode === DEFAULT_LANG,
+);
 const NON_ENGLISH_LANGS = languages.filter(
-  (item) => item.languageCode !== "en",
+  (item) => item.languageCode !== DEFAULT_LANG,
 );
 
 // Utility: Colorize console logs

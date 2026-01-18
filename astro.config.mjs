@@ -5,14 +5,12 @@ import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 import rehypeExternalLinks from "rehype-external-links";
 import remarkParseContent from "./src/lib/utils/remarkParseContent.ts";
-import {
-  parseTomlToJson,
-  reloadOnTomlChange,
-} from "./src/lib/utils/tomlUtils.ts";
+import config from ".astro/config.generated.json" with { type: "json" };
+import fontsJson from "./src/config/fonts.json";
+import { generateAstroFontsConfig } from "./src/lib/utils/AstroFont.ts";
 import { enabledLanguages } from "./src/lib/utils/i18nUtils.ts";
 
-const config = parseTomlToJson();
-
+const fonts = generateAstroFontsConfig(fontsJson);
 let {
   seo: { sitemap: sitemapConfig },
   settings: {
@@ -24,11 +22,16 @@ let {
 export default defineConfig({
   site: config.site.baseUrl ? config.site.baseUrl : "http://examplesite.com",
   trailingSlash: config.site.trailingSlash ? "always" : "never",
+  image: {
+    layout: "constrained",
+  },
+  experimental: {
+    fonts,
+  },
   i18n: {
     locales: enabledLanguages,
     defaultLocale: defaultLanguage,
     routing: {
-      redirectToDefaultLocale: showDefaultLangInUrl ? false : true,
       prefixDefaultLocale: showDefaultLangInUrl,
     },
   },
@@ -53,6 +56,6 @@ export default defineConfig({
     extendDefaultPlugins: true,
   },
   vite: {
-    plugins: [tailwindcss(), reloadOnTomlChange()],
+    plugins: [tailwindcss()],
   },
 });

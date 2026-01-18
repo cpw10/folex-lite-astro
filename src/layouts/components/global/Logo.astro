@@ -3,8 +3,7 @@ import { getLocaleUrlCTM } from "@/lib/utils/i18nUtils";
 import OptimizedImage from "@/components/utilities/OptimizedImage.astro";
 import { markdownify, toSentenceCase } from "@/lib/utils/textConverter";
 
-import { parseTomlToJson } from "@/lib/utils/tomlUtils";
-const config = parseTomlToJson();
+import config from ".astro/config.generated.json" with { type: "json" };
 
 type Props = {
   src?: string;

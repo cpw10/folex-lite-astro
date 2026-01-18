@@ -1,9 +1,9 @@
 ---
 import Base from "@/layouts/Base.astro";
 import extractSlug from "@/lib/utils/extractSlug";
-import { getEntryCTM } from "@/lib/customContentLoader.astro";
-import { parseTomlToJson } from "@/lib/utils/tomlUtils";
-import { getCollectionCTM } from "@/lib/customContentLoader.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
+import config from ".astro/config.generated.json" with { type: "json" };
+import { getCollectionCTM } from "@/lib/contentParser.astro";
 import PortfolioSingle from "@/components/PortfolioSingle.astro";
 import Breadcrumbs from "@/components/widgets/Breadcrumbs.astro";
 import { supportedLanguages } from "@/lib/utils/i18nUtils";
@@ -11,7 +11,6 @@ import { supportedLanguages } from "@/lib/utils/i18nUtils";
 export async function getStaticPaths() {
   const paths = await Promise.all(
     supportedLanguages.map(async (lang) => {
-      const config = parseTomlToJson();
       const { portfolioFolder }: { portfolioFolder: "portfolio" } =
         config.settings;
       const { defaultLanguage, showDefaultLangInUrl } =

@@ -1,14 +1,13 @@
 ---
-import { parseTomlToJson } from "@/lib/utils/tomlUtils";
+import config from ".astro/config.generated.json" with { type: "json" };
 import { markdownify } from "@/lib/utils/textConverter";
 import { splitProtectedText } from "@/lib/utils/splitProtectedText";
 import SocialComponent from "@/components/widgets/Social.astro";
 import social from "@/config/social.json";
 import { useTranslations } from "@/lib/utils/i18nUtils";
-import { getEntryCTM } from "@/lib/customContentLoader.astro";
+import { getEntryCTM } from "@/lib/contentParser.astro";
 import ContactForm from "../widgets/ContactForm.astro";
 
-const config = parseTomlToJson();
 const t = await useTranslations(Astro.currentLocale as string);
 
 let {

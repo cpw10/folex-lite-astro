@@ -1,41 +1,26 @@
-import toml from "toml";
 import path from "path";
 import fs from "fs/promises";
 import matter from "gray-matter";
-import { readFileSync } from "fs";
 import { parseStringPromise, Builder } from "xml2js";
 import languagesJSON from "../src/config/language.json" with { type: "json" };
+import config from "../.astro/config.generated.json" with { type: "json" };
 
 // Constants
 const DIST_FOLDER = "./dist";
 const CONTENT_FOLDER = "./src/content";
 const SITEMAP_FILE_PATTERN = /^sitemap-\d+\.xml$/;
 
-// Parse TOML Configuration
-function parseTomlToJson(filePath) {
-  try {
-    const content = readFileSync(filePath, "utf8");
-    if (!content) throw new Error(`File not found: ${filePath}`);
-    const parsedToml = toml.parse(content);
-    return JSON.parse(JSON.stringify(parsedToml, null, 2));
-  } catch (error) {
-    console.error(`Error parsing TOML file: ${filePath}`, error);
-    throw error;
-  }
-}
-
-// Configuration
-const config = parseTomlToJson(
-  path.join(process.cwd(), "src", "config", "config.toml"),
-);
-
 const settings = {
   ...config.settings.multilingual,
   languages: [...languagesJSON],
 };
 
-const EXCLUDE_FOLDERS = ["widgets", "sections", "author"];
-const INCLUDE_FOLDERS = config.seo.sitemap.exclude || [];
+const EXCLUDE_FOLDERS = [
+  "widgets",
+  "sections",
+  "author",
+  ...config.seo.sitemap.exclude,
+];
 
 // Helper: Get All Sitemap Files
 async function getSitemapFiles() {
@@ -100,23 +85,21 @@ function processFilePaths(filePaths) {
       if (url.includes("/pages/")) url = url.replace("/pages/", "/");
       if (url.includes("/homepage")) url = url.replace("/homepage", "/");
 
-      // Include URLs based on included folders
-      if (INCLUDE_FOLDERS.some((folder) => url.includes(folder))) {
-        url = filePath.split("/")[2];
-      }
-
-      const obj = { filePath, slug: url, data: metadata };
+      const obj = { id: url, data: metadata };
       if (
         metadata.draft ||
         metadata.excludeFromSitemap ||
-        INCLUDE_FOLDERS.some((folder) => url.includes(folder))
+        EXCLUDE_FOLDERS.some((folder) => url.includes(folder))
       ) {
-        if (!urlMappings.some((item) => item.filePath === obj.filePath)) {
+        if (
+          !urlMappings.some((item) => item.id === metadata.customSlug || obj.id)
+        ) {
           urlMappings.push(obj);
         }
       }
     }
   }
+
   return urlMappings;
 }
 
@@ -138,10 +121,7 @@ async function getContentFrontmatter(folder = CONTENT_FOLDER) {
             frontmatterMap[normalizedPath(entryPath)] = {
               excludeFromSitemap: data.excludeFromSitemap || false,
               draft: data.draft || false,
-              originalSlug:
-                data.data?.customSlug ||
-                data.id?.replace(/\.mdx?$/, "") ||
-                null,
+              originalSlug: data.id || null,
             };
           }
         } catch (error) {
@@ -196,9 +176,18 @@ async function processSitemaps() {
 
         sitemapObj.urlset.url = urls.filter((url) => {
           const pathname = new URL(url.loc).pathname;
-          return !draftPages.some((draft) =>
-            pathname.includes("/" + draft.slug),
+          const isDraft = !draftPages.some((draft) =>
+            pathname.includes(draft.data.customSlug || draft.id),
           );
+
+          const isExcludedFolder = EXCLUDE_FOLDERS.some((folder) =>
+            pathname.includes(folder),
+          );
+          if (isExcludedFolder) return false;
+
+          const isIndexPage = pathname.includes("-index");
+
+          return isDraft && !isIndexPage;
         });
 
         const updatedSitemap = new Builder().buildObject(sitemapObj);

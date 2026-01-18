@@ -1,5 +1,5 @@
 ---
-import { parseTomlToJson } from "@/lib/utils/tomlUtils";
+import config from ".astro/config.generated.json" with { type: "json" };
 import NavMenuItem from "@/layouts/components/global/header/MenuItem.astro";
 import { useTranslations } from "@/lib/utils/i18nUtils";
 import type { NavigationLink } from "@/types";
@@ -10,7 +10,6 @@ interface Props {
   isMobile?: boolean;
 }
 
-const config = parseTomlToJson();
 const t = await useTranslations(Astro.currentLocale as string);
 let main = t("headerPrimary") as NavigationLink[];
 main = filteredEnabled(main);
@@ -31,8 +30,8 @@ const { navigationButton } = config.settings;
         <CustomButton
           hoverEffect="creative-fill"
           class="btn-accent effect-color-dark"
-          label={t("navigation.buttonLabel")}
           {...navigationButton}
+          label={navigationButton.label || t("navigation.buttonLabel")}
         />
       </li>
     )

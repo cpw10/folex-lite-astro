@@ -1,5 +1,5 @@
 ---
-import { parseTomlToJson } from "./utils/tomlUtils";
+import config from ".astro/config.generated.json" with { type: "json" };
 import languages from "@/config/language.json";
 import {
   getCollection,
@@ -9,42 +9,42 @@ import {
 
 export const getCollectionCTM = async <C extends CollectionKey>(
   collectionName: C,
-  lang?: string,
-  sortByDate: boolean = true,
+  lang: string | undefined,
 ): Promise<CollectionEntry<C>[]> => {
-  const config = parseTomlToJson();
   const { defaultLanguage } = config.settings.multilingual;
 
   const selectedLanguageCode = lang || defaultLanguage;
 
   const language = languages.find(
-    (l: any) => l.languageCode === selectedLanguageCode,
+    (l: any) => l.languageCode == selectedLanguageCode,
   );
 
-  if (!language) throw new Error("Language not found");
+  if (!language) {
+    throw new Error("Language not found");
+  }
 
   const { contentDir } = language;
 
-  let pages = (await getCollection(
-    collectionName,
-    (item) =>
-      item.filePath?.includes(contentDir) && !item.filePath.includes("-index"),
+  const pages: CollectionEntry<C>[] = (await getCollection(
+    collectionName as any,
+    (item: any) => {
+      return item.id.startsWith(contentDir) && !item.id.includes("-index");
+    },
   )) as CollectionEntry<C>[];
 
-  if (sortByDate) {
-    pages.sort(
-      (a, b) =>
-        new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
-    );
-  }
+  // Prevent generation of pages with `draft: true` in production
+  let cleaned = import.meta.env.PROD
+    ? pages.filter((page) => !page.data.draft)
+    : pages;
 
-  if (import.meta.env.PROD) {
-    pages = pages.filter((page) => !page.data.draft);
-  }
+  // Sort by weight if present
+  cleaned = cleaned.sort((a, b) => {
+    const wa = a.data.weight ?? Infinity;
+    const wb = b.data.weight ?? Infinity;
+    return wa - wb;
+  });
 
-  pages = pages.filter((page) => !page.data.excludeFromCollection);
-
-  return pages;
+  return cleaned;
 };
 
 export const getEntryCTM = async <C extends CollectionKey>(
@@ -52,7 +52,6 @@ export const getEntryCTM = async <C extends CollectionKey>(
   subCollectionName: string,
   lang?: string, // Optional, defaults to undefined
 ): Promise<CollectionEntry<C>> => {
-  const config = parseTomlToJson();
   const { defaultLanguage } = config.settings.multilingual;
 
   const selectedLanguageCode = lang || defaultLanguage;

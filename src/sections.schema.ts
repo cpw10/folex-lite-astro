@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "astro:content";
 
 export const sharedButton = z
   .object({
@@ -26,7 +26,7 @@ export const sharedButtonTag = sharedButton.refine(
 );
 
 export const AppearanceEnum = z.enum(["dark", "light"]);
-export const button = sharedButton || sharedButtonTag;
+export const button = sharedButtonTag;
 
 export const videoConfigSchema = z.object({
   src: z.string(),

@@ -4,8 +4,8 @@ import PortfolioCard from "@/components/cards/PortfolioCard.astro";
 import { markdownify } from "@/lib/utils/textConverter";
 import overrideObjects from "@/lib/utils/overrideObjects.ts";
 import { useTranslations } from "@/lib/utils/i18nUtils";
-import { getCollectionCTM, getEntryCTM } from "@/lib/customContentLoader.astro";
-import { parseTomlToJson } from "@/lib/utils/tomlUtils";
+import { getCollectionCTM, getEntryCTM } from "@/lib/contentParser.astro";
+import config from ".astro/config.generated.json" with { type: "json" };
 import type { CollectionEntry } from "astro:content";
 
 // Type for this section data
@@ -31,7 +31,6 @@ let actualContent = overrideObjects(
   Astro.props.content,
 ) as PortfolioInterface;
 
-const config = parseTomlToJson();
 const t = await useTranslations(Astro.currentLocale as string);
 
 // Extracting required values from 'content' object

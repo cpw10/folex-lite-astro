@@ -2,7 +2,6 @@
 import { humanize } from "@/lib/utils/textConverter";
 import Breadcrumbs from "@/layouts/components/widgets/Breadcrumbs.astro";
 import OptimizedImage from "../utilities/OptimizedImage.astro";
-import { parseTomlToJson } from "@/lib/utils/tomlUtils";
 
 type Props = {
   content: {
@@ -14,13 +13,11 @@ type Props = {
   };
 };
 
-const config = parseTomlToJson();
-
 const {
   title,
   hiddenPaths,
   breadcrumb = false,
-  image = config.settings.pageHeaderDefaultImage,
+  image,
   paddingBottom = true,
 } = Astro.props.content;
 ---

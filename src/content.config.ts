@@ -1,9 +1,8 @@
-import { parseTomlToJson } from "@/lib/utils/tomlUtils";
 import { defineCollection, z } from "astro:content";
+import config from ".astro/config.generated.json" with { type: "json" };
 import { button, sectionsSchema } from "./sections.schema";
 import { glob } from "astro/loaders";
 
-const config = parseTomlToJson();
 const portfolioFolder = config.settings.portfolioFolder || "portfolio";
 const servicesFolder = config.settings.servicesFolder || "services";
 

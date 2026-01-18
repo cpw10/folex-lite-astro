@@ -5,14 +5,13 @@ import type { z } from "astro/zod";
 import type { contactFormSchema } from "@/sections.schema";
 import type { inputFieldSchema } from "@/sections.schema";
 import { getPrelineSelectConfig } from "@/lib/utils/preline";
-import { parseTomlToJson } from "@/lib/utils/tomlUtils";
+import config from ".astro/config.generated.json" with { type: "json" };
 
 interface Props {
   form: z.infer<typeof contactFormSchema>;
   class?: string;
 }
 
-const config = parseTomlToJson();
 const {
   settings: { contactFormAction, contactFormProvider },
 } = config;

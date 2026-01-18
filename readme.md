@@ -114,7 +114,7 @@ All commands are run from the root of the project, from a terminal:
 
 Deploy the Folex Lite Astro theme instantly to your favorite platform:
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/getastrothemes/folex-lite-astro)
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/getastrothemes/folex-lite-astro)
 
 ## 👀 Want to learn more?
 

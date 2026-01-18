@@ -1,12 +1,13 @@
 ---
 import SEO from "@/components/seo/Seo.astro";
-import { parseTomlToJson } from "@/lib/utils/tomlUtils";
 import JsonLD from "../widgets/JsonLD.astro";
 import Favicons from "../seo/Favicons.astro";
 import OpenGraph from "../seo/OpenGraph.astro";
-import Font from "../widgets/Font.astro";
+import config from ".astro/config.generated.json" with { type: "json" };
+import { Font } from "astro:assets";
+import fontsJson from "@/config/fonts.json";
 
-const config = parseTomlToJson();
+const fontVariables = fontsJson.map((font) => font.cssVariable) as any[];
 ---
 
 <head>
@@ -66,6 +67,8 @@ const config = parseTomlToJson();
     }}
   />
 
-  <!------------------------ Google Fonts ------------------------>
-  <Font />
+  <!------------------
+    Fonts
+-------------------->
+  {fontVariables.map((font) => <Font cssVariable={font} />)}
 </head>

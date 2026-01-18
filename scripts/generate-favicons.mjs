@@ -1,52 +1,16 @@
 import fs from "fs";
 import path from "path";
-import toml from "toml";
 import {
   getNodeImageAdapter,
   loadAndConvertToSvg,
 } from "@realfavicongenerator/image-adapter-node";
 import faviconGenerator from "@realfavicongenerator/generate-favicon";
+import config from "../.astro/config.generated.json" assert { type: "json" };
 
 // Constants
-const CONFIG_FILE_PATH = "./src/config/config.toml";
 const FAVICON_DIR = "./public/images/favicons/";
 const DEFAULT_TITLE = "Website";
 const DEFAULT_FAVICON_IMAGE = "/images/default-favicon.png"; // Fallback image
-
-// Helper: Parse TOML Configuration
-function parseTomlToJson(filePath) {
-  try {
-    const content = fs.readFileSync(filePath, "utf8");
-    if (!content) throw new Error(`File not found: ${filePath}`);
-
-    const tomlContent = toml.parse(content);
-
-    // Remove empty keys recursively
-    const removeEmptyKeys = (obj) => {
-      Object.keys(obj).forEach((key) => {
-        const value = obj[key];
-        if (
-          value === "" ||
-          (Array.isArray(value) && value.length === 0) ||
-          (typeof value === "object" &&
-            value !== null &&
-            Object.keys(value).length === 0)
-        ) {
-          delete obj[key];
-        } else if (typeof value === "object" && value !== null) {
-          removeEmptyKeys(value);
-          if (Object.keys(value).length === 0) delete obj[key];
-        }
-      });
-      return obj;
-    };
-
-    return removeEmptyKeys(JSON.parse(JSON.stringify(tomlContent, null, 2)));
-  } catch (error) {
-    console.error(`Error parsing TOML file: ${filePath}`, error);
-    throw error;
-  }
-}
 
 // Helper: Create Directory if Not Exists
 function ensureDirectoryExists(directoryPath) {
@@ -59,8 +23,7 @@ function ensureDirectoryExists(directoryPath) {
 // Main: Generate Favicons
 async function generateFavicons() {
   try {
-    // Parse configuration
-    const config = parseTomlToJson(CONFIG_FILE_PATH);
+  // Parse configuration
     const title = config?.site?.title || DEFAULT_TITLE;
     const faviconImage = config?.site?.favicon?.image || DEFAULT_FAVICON_IMAGE;
 
