@@ -43,14 +43,43 @@ _structures:
 
 # Collections configuration
 collections_config:
-  homepage:
-    path: src/content/homepage
+  # English Homepage - default language (no prefix in URL)
+  homepage_en:
+    path: src/content/homepage/english
+    url: /
+    output: true
+    name: Homepage (English)
+    glob:
+      - "-index.md"
     _enabled_editors:
       - visual
       - content
+    _inputs:
+      content_blocks:
+        type: array
+        options:
+          structures: _structures.content_blocks
+
+  # French Homepage
+  homepage_fr:
+    path: src/content/homepage/french
+    url: /fr/
+    output: true
+    name: Homepage (French)
+    glob:
+      - "-index.md"
+    _enabled_editors:
+      - visual
+      - content
+    _inputs:
+      content_blocks:
+        type: array
+        options:
+          structures: _structures.content_blocks
 
   sections:
     path: src/content/sections
+    output: false
     _enabled_editors:
       - content
       - data
@@ -58,6 +87,7 @@ collections_config:
   pages:
     path: src/content/pages
     url: /[slug]/
+    output: true
     _enabled_editors:
       - visual
       - content
