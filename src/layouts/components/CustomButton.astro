@@ -60,10 +60,12 @@ if (hoverEffect && hoverEffect !== "creative-fill") {
   );
 }
 
-const resolvedRel = url.startsWith("http")
+// Guard for CloudCannon visual editor - url may be undefined even with default
+const safeUrl = url || "#";
+const resolvedRel = safeUrl.startsWith("http")
   ? rel || "noopener noreferrer"
   : rel || undefined;
-const resolvedTarget = url.startsWith("http")
+const resolvedTarget = safeUrl.startsWith("http")
   ? target || "_blank"
   : target || undefined;
 
@@ -86,7 +88,7 @@ const buttonClasses = [
       rel={resolvedRel}
       target={resolvedTarget}
       class:list={buttonClasses}
-      href={getLocaleUrlCTM(url, Astro.currentLocale)}
+      href={getLocaleUrlCTM(safeUrl, Astro.currentLocale)}
       {...rest}>
       <CustomButtonContent
         {...{

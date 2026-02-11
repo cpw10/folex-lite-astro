@@ -1,6 +1,9 @@
 const cache = new Map<string, string>();
 
 export default function uniqueIdGenerator(str: string): string {
+  // Guard for undefined/null input (CloudCannon visual editor compatibility)
+  if (!str) return "default-id";
+
   // Check if the result for this input is already cached
   if (cache.has(str)) {
     return cache.get(str)!;

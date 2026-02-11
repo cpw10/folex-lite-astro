@@ -45,8 +45,8 @@ let projects = await getCollectionCTM(
 
 const isDarkAppearance = appearance === "dark";
 
-// Limiting the number of projects to be displayed
-projects = limit ? projects.slice(0, limit as number) : projects;
+// Limiting the number of projects to be displayed (with guard for CloudCannon visual editor)
+projects = projects && limit ? projects.slice(0, limit as number) : (projects || []);
 
 if (!enable) {
   return null;
@@ -78,7 +78,7 @@ if (!enable) {
               "gap-x-20 lg:columns-2",
               layout === "grid" && "space-y-10",
             ]}>
-            {projects.map((item, index) => (
+            {projects?.length > 0 && projects.map((item, index) => (
               <PortfolioCard
                 class:list={["space-y-4 overflow-hidden"]}
                 options={options}

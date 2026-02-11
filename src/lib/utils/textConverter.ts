@@ -36,14 +36,14 @@ export const markdownify = (content: string, container?: boolean) => {
 
 // humanize
 export const humanize = (content: string) => {
-  if (content)
-    return content
-      .replace(/^[\s_]+|[\s_]+$/g, "")
-      .replace(/[_\s]+/g, " ")
-      .replace(/[-\s]+/g, " ")
-      .replace(/^[a-z]/, function (m) {
-        return m.toUpperCase();
-      });
+  if (!content) return "";
+  return content
+    .replace(/^[\s_]+|[\s_]+$/g, "")
+    .replace(/[_\s]+/g, " ")
+    .replace(/[-\s]+/g, " ")
+    .replace(/^[a-z]/, function (m) {
+      return m.toUpperCase();
+    });
 };
 
 // Function for converting string to capitalized words
