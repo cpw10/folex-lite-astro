@@ -22,14 +22,12 @@ let {
   class: className,
 } = Astro.props;
 
-let {
-  id,
-  collection,
-  data: { title, categories, image, description, customSlug },
-} = content;
+// Defensive destructuring for CloudCannon live editing compatibility
+const { id = "", collection = "portfolio", data = {} } = content || {};
+const { title, categories, image, description, customSlug } = data;
 
 const t = await useTranslations(Astro.currentLocale as string);
-const slug = getLocaleUrlCTM(customSlug || id, Astro.currentLocale, collection);
+const slug = content ? getLocaleUrlCTM(customSlug || id, Astro.currentLocale, collection) : "#";
 const hasCategories = Array.isArray(categories) && categories.length > 0;
 const isDarkAppearance = options?.appearance === "dark";
 ---

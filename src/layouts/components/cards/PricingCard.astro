@@ -1,6 +1,5 @@
 ---
 import type { z } from "astro/zod";
-import ReactIcons from "@/helpers/ReactIcons.astro";
 import { markdownify } from "@/lib/utils/textConverter";
 import type { pricingSectionSchema } from "@/sections.schema";
 import CustomButton from "../CustomButton.astro";
@@ -14,11 +13,10 @@ type Props = {
   class?: string;
 };
 
-const {
-  class: className,
-  content: { enable, name, price, description, features, button },
-  ...rest
-} = Astro.props;
+const { class: className, content, ...rest } = Astro.props;
+
+// Defensive destructuring for CloudCannon live editing compatibility
+const { enable, name, price, description, features, button } = content || {};
 ---
 
 {
@@ -49,11 +47,14 @@ const {
           <p class="text-lg" set:html={markdownify(description)} />
         )}
       </div>
-      {features && (
+      {features && features.length > 0 && (
         <ul class="font-secondary space-y-4 text-sm font-medium text-black">
           {features.map((feature) => (
             <li class="flex items-center gap-2">
-              <ReactIcons icon="IoMdCheckmark" class="text-xl text-black" />
+              {/* Inline SVG replaces ReactIcons for CloudCannon SSR compatibility */}
+              <svg class="text-xl text-black" width="1em" height="1em" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M186.301 339.893L96 249.461l-32 30.507L186.301 402 448 140.506 416 110z" fill="currentColor"></path>
+              </svg>
               <span set:html={markdownify(feature)} />
             </li>
           ))}
