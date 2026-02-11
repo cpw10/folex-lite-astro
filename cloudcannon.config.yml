@@ -1,8 +1,74 @@
 paths:
   static: public
   uploads: public/uploads
+
 timezone: Europe/Oslo
+
 markdown:
   engine: commonmark
   options:
     gfm: true
+
+# Enable visual editor
+_enabled_editors:
+  - visual
+  - content
+  - data
+
+# Structures for page building
+_structures:
+  content_blocks:
+    style: modal
+    values:
+      - label: Hero Banner
+        icon: star
+        value:
+          _name: banner
+      - label: Client Logos
+        icon: business
+        value:
+          _name: clients
+      - label: Services
+        icon: build
+        value:
+          _name: services
+      - label: Portfolio
+        icon: collections
+        value:
+          _name: portfolio
+      - label: Pricing
+        icon: payments
+        value:
+          _name: pricing
+
+# Collections configuration
+collections_config:
+  homepage:
+    path: src/content/homepage
+    _enabled_editors:
+      - visual
+      - content
+
+  sections:
+    path: src/content/sections
+    _enabled_editors:
+      - content
+      - data
+
+  pages:
+    path: src/content/pages
+    url: /[slug]/
+    _enabled_editors:
+      - visual
+      - content
+
+# Input configurations
+_inputs:
+  title:
+    type: text
+  description:
+    type: textarea
+  content_blocks:
+    type: array
+    options:
+      structures: _structures.content_blocks

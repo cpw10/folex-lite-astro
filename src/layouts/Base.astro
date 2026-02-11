@@ -56,6 +56,14 @@ className = fitToScreen
 <html lang="en">
   <Head {...props} structuredData={structuredData} />
   <body class:list={[hasBodyDarkBackground && "bg-body-dark"]}>
+    <script>
+      // Lazy load CloudCannon component registration only when in editor mode
+      if (window?.inEditorMode) {
+        import("../scripts/register-components.ts").catch((error) => {
+          console.warn("Failed to load CloudCannon component registration:", error);
+        });
+      }
+    </script>
     <Header
       position={headerPosition}
       hasDarkBackground={hasHeaderDarkBackground}

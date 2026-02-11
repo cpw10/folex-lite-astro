@@ -30,6 +30,7 @@
     "node": ">=18.20.8 <19 || >=20.3.0 <21 || >=22.0.0"
   },
   "dependencies": {
+    "@cloudcannon/editable-regions": "^0.0.10",
     "@floating-ui/dom": "^1.7.4",
     "@popperjs/core": "^2.11.8",
     "@preline/accordion": "^3.2.3",
@@ -44,7 +45,9 @@
     "react-dom": "^19.2.3",
     "react-icons": "^5.5.0",
     "smoothscroll-for-websites": "^1.5.1",
-    "swiper": "^12.0.3"
+    "swiper": "^12.0.3",
+    "vite": "^7.3.1",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",

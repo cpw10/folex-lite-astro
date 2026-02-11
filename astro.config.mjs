@@ -4,6 +4,7 @@ import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 import rehypeExternalLinks from "rehype-external-links";
+import editableRegions from "@cloudcannon/editable-regions/astro-integration";
 import remarkParseContent from "./src/lib/utils/remarkParseContent.ts";
 import config from ".astro/config.generated.json" with { type: "json" };
 import fontsJson from "./src/config/fonts.json";
@@ -35,7 +36,7 @@ export default defineConfig({
       prefixDefaultLocale: showDefaultLangInUrl,
     },
   },
-  integrations: [react(), sitemapConfig.enable ? sitemap() : null, mdx()],
+  integrations: [react(), sitemapConfig.enable ? sitemap() : null, mdx(), editableRegions()],
   markdown: {
     rehypePlugins: [
       [

@@ -1,0 +1,48 @@
+---
+const { contentBlocks = [] } = Astro.props;
+
+// Dynamic component imports from sections folder
+const components: Record<string, any> = {};
+const componentImports = import.meta.glob(
+  "../../layouts/components/sections/*.astro",
+  { eager: true }
+);
+
+// Map component names to match _name in content_blocks
+const nameMap: Record<string, string> = {
+  "Banner": "banner",
+  "Clients": "clients",
+  "ServicesSection": "services",
+  "PortfolioSection": "portfolio",
+  "PricingSection": "pricing",
+};
+
+Object.entries(componentImports).forEach(([path, obj]: [string, any]) => {
+  const fileName = path.split("/").pop()?.replace(".astro", "") || "";
+  const componentName = nameMap[fileName] || fileName.toLowerCase();
+  components[componentName] = obj.default;
+});
+---
+
+<div
+  id="main-content"
+  data-editable="array"
+  data-prop="content_blocks"
+  data-id-key="_name"
+  data-component-key="_name"
+>
+  {contentBlocks?.length > 0 && contentBlocks.map((block) => {
+    const Component = components[block._name];
+    if (!Component) {
+      console.warn(`Component not found: ${block._name}`);
+      return null;
+    }
+    return (
+      <editable-array-item data-id={block._name} data-component={block._name}>
+        <editable-component data-component={block._name} data-prop="">
+          <Component content={block} />
+        </editable-component>
+      </editable-array-item>
+    );
+  })}
+</div>
