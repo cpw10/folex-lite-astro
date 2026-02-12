@@ -13,10 +13,10 @@ type Props = {
   content?: pricingSectionSchema;
 };
 
-// Fetching the default content for the this section
+// Fetching the default content for the this section (with fallback for CloudCannon visual editor)
 let defaultContent = (
-  await getEntryCTM("sections", "pricing-section", Astro.currentLocale)
-)?.data as pricingSectionSchema;
+  (await getEntryCTM("sections", "pricing-section", Astro.currentLocale))?.data || {}
+) as pricingSectionSchema;
 
 // Enables content customization (e.g., title, description) with a fallback to 'defaultContent' if not provided.
 // The 'content' prop should match the structure of 'defaultContent'.

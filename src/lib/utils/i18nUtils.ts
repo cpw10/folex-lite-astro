@@ -3,6 +3,9 @@ import trailingSlashChecker from "./trailingSlashChecker";
 import config from "../../../.astro/config.generated.json";
 import languagesJSON from "../../config/language.json";
 
+// Guard for CloudCannon visual editor - JSON imports may fail in browser context
+const safeLanguagesJSON = languagesJSON || [];
+
 // Load configuration from TOML file
 let {
   enable: multilingualEnable,
@@ -12,8 +15,8 @@ let {
 } = config.settings.multilingual;
 
 export const getEnabledLocales = (): string[] => {
-  let enabled = languagesJSON.map((lang) => lang.languageCode);
-  const supported = languagesJSON.map((lang) => lang.languageCode);
+  let enabled = safeLanguagesJSON.map((lang) => lang.languageCode);
+  const supported = safeLanguagesJSON.map((lang) => lang.languageCode);
   const disabled = multilingualEnable
     ? disableLanguages || []
     : supported.filter((lang) => lang !== defaultLanguage);
@@ -50,8 +53,8 @@ export const useTranslations = async (lang: string): Promise<Function> => {
 
   // Find the language configuration
   const language =
-    languagesJSON.find((l) => l.languageCode === resolvedLang) ||
-    languagesJSON.find((l) => l.languageCode === defaultLanguage);
+    safeLanguagesJSON.find((l) => l.languageCode === resolvedLang) ||
+    safeLanguagesJSON.find((l) => l.languageCode === defaultLanguage);
 
   if (!language) {
     throw new Error("Default language configuration not found");
@@ -123,7 +126,7 @@ export const getSupportedLanguages = (): Array<any> => {
     return cachedLanguages;
   }
 
-  const supportedLanguages = [...languagesJSON.map((lang) => lang)];
+  const supportedLanguages = [...safeLanguagesJSON.map((lang) => lang)];
   let disabledLanguages = (
     config.settings.multilingual.enable
       ? config.settings.multilingual.disableLanguages
@@ -185,10 +188,13 @@ export const getLocaleUrlCTM = (
   providedLang: string | undefined,
   prependValue?: string,
 ): string => {
+  // Guard for CloudCannon visual editor - url may be undefined
+  if (!url) return "#";
+
   const language = providedLang || defaultLanguage;
-  const languageCodes = languagesJSON.map((language) => language.languageCode);
+  const languageCodes = safeLanguagesJSON.map((language) => language.languageCode);
   const languageDirectories = new Set(
-    languagesJSON.map((language) => language.contentDir),
+    safeLanguagesJSON.map((language) => language.contentDir),
   );
 
   function checkIsExternal(url: string) {

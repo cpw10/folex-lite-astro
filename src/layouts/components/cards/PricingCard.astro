@@ -60,11 +60,15 @@ const { enable, name, price, description, features, button } = content || {};
           ))}
         </ul>
       )}
-      {button?.enable && (
+      {button && button.enable && (
         <CustomButton
           class="effect-color-accent text-center"
           hoverEffect="creative-fill"
-          {...button}
+          label={button.label || ""}
+          url={button.url || "#"}
+          variant={button.variant}
+          target={button.target}
+          rel={button.rel}
         />
       )}
     </div>
