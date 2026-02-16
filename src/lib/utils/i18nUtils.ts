@@ -6,6 +6,23 @@ import languagesJSON from "../../config/language.json";
 // Guard for CloudCannon visual editor - JSON imports may fail in browser context
 const safeLanguagesJSON = languagesJSON || [];
 
+// Safe path join for browser compatibility (path.posix is undefined when externalized)
+const safePathJoin = (...segments: string[]): string => {
+  // Use path.posix.join if available (Node.js environment)
+  if (typeof path?.posix?.join === "function") {
+    return path.posix.join(...segments);
+  }
+  // Browser fallback: simple path joining
+  return segments
+    .filter((seg) => seg != null && seg !== "")
+    .reduce((acc, seg, i) => {
+      if (i === 0) return seg;
+      const cleanSeg = seg.replace(/^\/+/, "");
+      return acc.endsWith("/") ? acc + cleanSeg : acc + "/" + cleanSeg;
+    }, "")
+    .replace(/\/+/g, "/") || "/";
+};
+
 // Load configuration from TOML file
 let {
   enable: multilingualEnable,
@@ -262,9 +279,9 @@ export const getLocaleUrlCTM = (
   if (prependValue) {
     // Ensure updatedUrl a absolute path (services/services-01 -> /services/services-01)
     if (!prependValue.startsWith("/")) {
-      updatedUrl = path.posix.join("/" + prependValue, updatedUrl);
+      updatedUrl = safePathJoin("/" + prependValue, updatedUrl);
     } else {
-      updatedUrl = path.posix.join(prependValue, updatedUrl);
+      updatedUrl = safePathJoin(prependValue, updatedUrl);
     }
   }
 
@@ -302,7 +319,7 @@ export const getLocaleUrlCTM = (
   const prependLanguage = shouldOmitDefaultLang ? "" : `/${shouldShowDefaultLang ? defaultLanguage : language}`;
 
   // Combine the language prefix with the URL with or without its language code
-  updatedUrl = path.posix.join(
+  updatedUrl = safePathJoin(
     prependLanguage,
     getUrlWithoutLang(updatedUrl) as string,
   );
