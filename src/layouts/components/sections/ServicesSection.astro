@@ -1,6 +1,5 @@
 ---
-import { getCollectionCTM, getEntryCTM } from "@/lib/contentParser.astro";
-import overrideObjects from "@/lib/utils/overrideObjects.ts";
+import { getCollectionCTM } from "@/lib/contentParser.astro";
 import { markdownify } from "@/lib/utils/textConverter";
 import uniqueIdGenerator from "@/lib/utils/uniqueIdGenerator";
 import type { z } from "astro/zod";
@@ -18,27 +17,19 @@ type Props = {
   content?: ServicesInterface;
 };
 
-// Fetching the default content for the this section
-let defaultContent = (
-  await getEntryCTM("sections", "services-section", Astro.currentLocale)
-)?.data as ServicesInterface;
+// Content comes directly from props (inline in content_blocks array)
+// This enables CloudCannon visual editing
+const content = Astro.props.content || {} as ServicesInterface;
 
-// Enables content customization (e.g., title, description) with a fallback to 'defaultContent' if not provided.
-// The 'content' prop should match the structure of 'defaultContent'.
-// Allows using this section with different content across multiple pages.
-// If 'content' is missing, 'defaultContent' will be used.
-let actualContent = overrideObjects(
-  defaultContent,
-  Astro.props.content,
-) as ServicesInterface;
-
-// Extracting required values from 'content' object
+// Extracting values from content with defaults
 let {
   enable = true,
-  title,
+  title = "",
   sectionDirection = "vertical",
-  options: { layout = "accordion", appearance, limit = false } = {},
-} = actualContent as ServicesInterface;
+  options = {},
+} = content;
+
+const { layout = "accordion", appearance, limit = false } = options;
 
 let services = (await getCollectionCTM("services", Astro.currentLocale)) as
   | Service[]

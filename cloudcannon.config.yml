@@ -15,7 +15,7 @@ _enabled_editors:
   - content
   - data
 
-# Structures for page building
+# Structures for page building with full field definitions
 _structures:
   content_blocks:
     style: modal
@@ -24,22 +24,211 @@ _structures:
         icon: star
         value:
           _name: banner
+          enable: true
+          titleSize: display-2
+          title:
+          image:
+          description:
+          button:
+            enable: false
+            label:
+            url:
+        _inputs:
+          title:
+            type: textarea
+            label: Title
+            comment: HTML supported (use <br /> for line breaks)
+          titleSize:
+            type: select
+            options:
+              values:
+                - display-1
+                - display-2
+                - display-3
+          image:
+            type: image
+          description:
+            type: textarea
+          enable:
+            type: switch
+            label: Show Section
+
       - label: Client Logos
         icon: business
         value:
           _name: clients
+          enable: true
+          title:
+          list: []
+          options:
+            appearance: light
+            columnsPerRow: 4
+        _inputs:
+          title:
+            type: text
+          enable:
+            type: switch
+            label: Show Section
+          list:
+            type: array
+            label: Client Logos
+          options.appearance:
+            type: select
+            options:
+              values:
+                - light
+                - dark
+          options.columnsPerRow:
+            type: select
+            options:
+              values:
+                - 4
+                - 6
+
       - label: Services
         icon: build
         value:
           _name: services
+          enable: true
+          title:
+          options:
+            layout: accordion
+            limit: 6
+            column: 3
+            iconPlacement: top
+        _inputs:
+          title:
+            type: textarea
+          enable:
+            type: switch
+            label: Show Section
+          options.layout:
+            type: select
+            options:
+              values:
+                - accordion
+                - grid
+          options.limit:
+            type: number
+          options.column:
+            type: select
+            options:
+              values:
+                - 1
+                - 2
+                - 3
+          options.iconPlacement:
+            type: select
+            options:
+              values:
+                - top
+                - right
+
       - label: Portfolio
         icon: collections
         value:
           _name: portfolio
+          enable: true
+          title:
+          options:
+            layout: grid
+            appearance: light
+            limit: 4
+          button:
+            enable: true
+            label:
+            url:
+        _inputs:
+          title:
+            type: textarea
+          enable:
+            type: switch
+            label: Show Section
+          options.layout:
+            type: select
+            options:
+              values:
+                - masonry
+                - grid
+                - full-width
+                - slider
+          options.appearance:
+            type: select
+            options:
+              values:
+                - light
+                - dark
+          options.limit:
+            type: number
+
       - label: Pricing
         icon: payments
         value:
           _name: pricing
+          enable: true
+          title:
+          list: []
+        _inputs:
+          title:
+            type: textarea
+          enable:
+            type: switch
+            label: Show Section
+          list:
+            type: array
+            label: Pricing Plans
+
+  # Sub-structure for client logo items
+  client_logo:
+    values:
+      - label: Logo
+        value:
+          src:
+          alt:
+        _inputs:
+          src:
+            type: image
+          alt:
+            type: text
+
+  # Sub-structure for pricing plan items
+  pricing_plan:
+    values:
+      - label: Pricing Plan
+        value:
+          enable: true
+          name:
+          description:
+          price:
+            prependValue: "$"
+            value:
+            appendValue: "/mo"
+          features: []
+          button:
+            enable: true
+            label:
+            url:
+        _inputs:
+          enable:
+            type: switch
+          name:
+            type: text
+          description:
+            type: textarea
+          price.prependValue:
+            type: text
+          price.value:
+            type: text
+          price.appendValue:
+            type: text
+          features:
+            type: array
+          button.enable:
+            type: switch
+          button.label:
+            type: text
+          button.url:
+            type: url
 
 # Collections configuration
 collections_config:
@@ -92,7 +281,7 @@ collections_config:
       - visual
       - content
 
-# Input configurations
+# Global input configurations
 _inputs:
   title:
     type: text
@@ -102,3 +291,13 @@ _inputs:
     type: array
     options:
       structures: _structures.content_blocks
+  list:
+    type: array
+  enable:
+    type: switch
+  image:
+    type: image
+  url:
+    type: url
+  label:
+    type: text

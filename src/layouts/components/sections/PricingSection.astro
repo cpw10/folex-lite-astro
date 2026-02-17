@@ -1,34 +1,22 @@
 ---
 import type { z } from "astro/zod";
-import { getEntryCTM } from "@/lib/contentParser.astro";
 import { markdownify } from "@/lib/utils/textConverter";
-import overrideObjects from "@/lib/utils/overrideObjects.ts";
 import type { pricingSectionSchema } from "@/sections.schema";
 import PricingCard from "@/layouts/components/cards/PricingCard.astro";
 
 // Type for this section data
-type pricingSectionSchema = NonNullable<z.infer<typeof pricingSectionSchema>>;
+type PricingSection = NonNullable<z.infer<typeof pricingSectionSchema>>;
 
 type Props = {
-  content?: pricingSectionSchema;
+  content?: PricingSection;
 };
 
-// Fetching the default content for the this section (with fallback for CloudCannon visual editor)
-let defaultContent = (
-  (await getEntryCTM("sections", "pricing-section", Astro.currentLocale))?.data || {}
-) as pricingSectionSchema;
+// Content comes directly from props (inline in content_blocks array)
+// This enables CloudCannon visual editing
+const content = Astro.props.content || {} as PricingSection;
 
-// Enables content customization (e.g., title, description) with a fallback to 'defaultContent' if not provided.
-// The 'content' prop should match the structure of 'defaultContent'.
-// Allows using this section with different content across multiple pages.
-// If 'content' is missing, 'defaultContent' will be used.
-let actualContent = overrideObjects(
-  { ...defaultContent },
-  Astro.props.content,
-) as pricingSectionSchema;
-
-// Extracting required values from 'content' object
-let { enable = true, title, list } = actualContent || {};
+// Extracting values from content with defaults
+let { enable = true, title = "", list = [] } = content;
 
 if (!enable) {
   return null;
