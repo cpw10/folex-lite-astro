@@ -40,12 +40,12 @@ if (!enable) {
     {
       title && (
         <div class="text-center">
-          <h2 class="text-h1-sm md:text-h1" set:html={markdownify(title)} />
+          <h2 data-prop="title" class="text-h1-sm md:text-h1" set:html={markdownify(title)} />
         </div>
       )
     }
 
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div data-prop="list" data-editable="array" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
       {list?.map((item) => <PricingCard content={item} />)}
     </div>
   </div>

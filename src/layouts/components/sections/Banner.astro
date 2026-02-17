@@ -50,6 +50,7 @@ const fontSize = titleSize ? fontSizeMap[titleSize] : fontSizeMap["display-1"];
       {
         title && (
           <h1
+            data-prop="title"
             data-aos="reveal-anim-top"
             data-aos-duration="1500"
             class:list={[
@@ -70,6 +71,7 @@ const fontSize = titleSize ? fontSizeMap[titleSize] : fontSizeMap["display-1"];
             class="mx-auto max-w-2xl space-y-6">
             {description && (
               <p
+                data-prop="description"
                 class="text-lg text-inherit opacity-80"
                 set:html={markdownify(description)}
               />
@@ -85,6 +87,7 @@ const fontSize = titleSize ? fontSizeMap[titleSize] : fontSizeMap["display-1"];
         ) : (
           description && (
             <p
+              data-prop="description"
               data-aos="reveal-anim-top"
               data-aos-delay="200"
               data-aos-duration="1500"
@@ -98,6 +101,7 @@ const fontSize = titleSize ? fontSizeMap[titleSize] : fontSizeMap["display-1"];
       {
         image && (
           <div
+            data-prop="image"
             data-aos="reveal-anim-top"
             data-aos-duration="1500"
             data-aos-delay="300"
