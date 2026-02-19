@@ -28,7 +28,7 @@ if (!enable) {
     {
       title && (
         <div class="text-center">
-          <h2 data-prop="title" class="text-h1-sm md:text-h1" set:html={markdownify(title)} />
+          <h2 data-editable="text" data-prop="title" class="text-h1-sm md:text-h1" set:html={markdownify(title)} />
         </div>
       )
     }
